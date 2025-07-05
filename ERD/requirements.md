@@ -1,165 +1,194 @@
+<!-----
+This is used to describe the database specification intuitively
+----->
 
 
-Airbnb Database Specification
+# Airbnb Database Specification
 
-Overview
+## Overview
 
-This document outlines the database schema for an Airbnb-like platform, detailing entities, attributes, relationships, and best practices for documentation. The schema supports core functionalities such as user management, property listings, bookings, payments, reviews, and messaging. It is designed to ensure data integrity, scalability, and clarity for all stakeholders, including developers, database administrators, and analysts.
+This document outlines the database schema for an Airbnb-like platform, detailing entities, attributes, relationships, and best practices. It supports user management, property listings, bookings, payments, reviews, and messaging, ensuring data integrity, scalability, and clarity.
 
-Entities and Attributes
+---
 
-User
+## Entities and Attributes
 
-Represents a platform user, who can be a guest, host, or admin.
+### User
 
-user_id: UUID, Primary Key, Indexed
+| Column        | Type                          | Constraints                              |
 
-first_name: VARCHAR(50), NOT NULL
+| ------------- | ----------------------------- | ---------------------------------------- |
 
-last_name: VARCHAR(50), NOT NULL
+| **user_id**       | UUID                          | Primary Key, Indexed                     |
 
-email: VARCHAR(100), UNIQUE, NOT NULL
+| **first_name**    | VARCHAR(50)                   | NOT NULL                                 |
 
-password_hash: VARCHAR(255), NOT NULL
+| **last_name**     | VARCHAR(50)                   | NOT NULL                                 |
 
-phone_number: VARCHAR(20), NULL
+| **email**         | VARCHAR(100)                  | UNIQUE, NOT NULL                         |
 
-role: ENUM('guest', 'host', 'admin'), NOT NULL
+| **password_hash** | VARCHAR(255)                  | NOT NULL                                 |
 
-created_at: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
+| **phone_number**  | VARCHAR(20)                   | NULL                                     |
 
-Property
+| **role**          | ENUM('guest','host','admin')  | NOT NULL                                 |
 
-Represents a property listed on the platform, owned by a host.
+| **created_at**    | TIMESTAMP                     | DEFAULT CURRENT_TIMESTAMP                |
 
-property_id: UUID, Primary Key, Indexed
+### Property
 
-host_id: UUID, Foreign Key (references User.user_id), NOT NULL
+| Column             | Type                  | Constraints                                  |
 
-name: VARCHAR(100), NOT NULL
+| ------------------ | --------------------- | -------------------------------------------- |
 
-description: TEXT, NOT NULL
+| **property_id**       | UUID                  | Primary Key, Indexed                        |
 
-location: VARCHAR(255), NOT NULL
+| **host_id**           | UUID                  | Foreign Key → User(user_id), NOT NULL       |
 
-price_per_night: DECIMAL(10,2), NOT NULL
+| **name**              | VARCHAR(100)          | NOT NULL                                    |
 
-created_at: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
+| **description**       | TEXT                  | NOT NULL                                    |
 
-updated_at: TIMESTAMP, ON UPDATE CURRENT_TIMESTAMP
+| **location**          | VARCHAR(255)          | NOT NULL                                    |
 
-Booking
+| **price_per_night**   | DECIMAL(10,2)         | NOT NULL                                    |
 
-Represents a reservation made by a guest for a property.
+| **created_at**        | TIMESTAMP             | DEFAULT CURRENT_TIMESTAMP                   |
 
-booking_id: UUID, Primary Key, Indexed
+| **updated_at**        | TIMESTAMP             | ON UPDATE CURRENT_TIMESTAMP                 |
 
-property_id: UUID, Foreign Key (references Property.property_id), NOT NULL
+### Booking
 
-user_id: UUID, Foreign Key (references User.user_id), NOT NULL
+| Column        | Type                                | Constraints                                      |
 
-start_date: DATE, NOT NULL
+| ------------- | ----------------------------------- | ------------------------------------------------ |
 
-end_date: DATE, NOT NULL
+| **booking_id**    | UUID                                | Primary Key, Indexed                             |
 
-total_price: DECIMAL(10,2), NOT NULL
+| **property_id**   | UUID                                | Foreign Key → Property(property_id), NOT NULL    |
 
-status: ENUM('pending', 'confirmed', 'canceled'), NOT NULL
+| **user_id**       | UUID                                | Foreign Key → User(user_id), NOT NULL            |
 
-created_at: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
+| **start_date**    | DATE                                | NOT NULL                                         |
 
-Payment
+| **end_date**      | DATE                                | NOT NULL                                         |
 
-Represents a payment associated with a booking.
+| **total_price**   | DECIMAL(10,2)                       | NOT NULL                                         |
 
-payment_id: UUID, Primary Key, Indexed
+| **status**        | ENUM('pending','confirmed','canceled') | NOT NULL                                      |
 
-booking_id: UUID, Foreign Key (references Booking.booking_id), NOT NULL
+| **created_at**    | TIMESTAMP                           | DEFAULT CURRENT_TIMESTAMP                        |
 
-amount: DECIMAL(10,2), NOT NULL
+### Payment
 
-payment_date: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
+| Column           | Type                                | Constraints                                      |
 
-payment_method: ENUM('credit_card', 'paypal', 'stripe'), NOT NULL
+| ---------------- | ----------------------------------- | ------------------------------------------------ |
 
-Review
+| **payment_id**      | UUID                                | Primary Key, Indexed                             |
 
-Represents a review written by a guest for a property.
+| **booking_id**      | UUID                                | Foreign Key → Booking(booking_id), NOT NULL      |
 
-review_id: UUID, Primary Key, Indexed
+| **amount**          | DECIMAL(10,2)                       | NOT NULL                                         |
 
-property_id: UUID, Foreign Key (references Property.property_id), NOT NULL
+| **payment_date**    | TIMESTAMP                           | DEFAULT CURRENT_TIMESTAMP                        |
 
-user_id: UUID, Foreign Key (references User.user_id), NOT NULL
+| **payment_method**  | ENUM('credit_card','paypal','stripe') | NOT NULL                                      |
 
-rating: INTEGER, CHECK (rating >= 1 AND rating &lt;= 5), NOT NULL
+### Review
 
-comment: TEXT, NOT NULL
+| Column        | Type                                | Constraints                                      |
 
-created_at: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
+| ------------- | ----------------------------------- | ------------------------------------------------ |
 
-Message
+| **review_id**     | UUID                                | Primary Key, Indexed                             |
 
-Represents a message exchanged between users.
+| **property_id**   | UUID                                | Foreign Key → Property(property_id), NOT NULL    |
 
-message_id: UUID, Primary Key, Indexed
+| **user_id**       | UUID                                | Foreign Key → User(user_id), NOT NULL            |
 
-sender_id: UUID, Foreign Key (references User.user_id), NOT NULL
+| **rating**        | INTEGER                             | CHECK (rating ≥ 1 AND rating ≤ 5), NOT NULL       |
 
-recipient_id: UUID, Foreign Key (references User.user_id), NOT NULL
+| **comment**       | TEXT                                | NOT NULL                                         |
 
-message_body: TEXT, NOT NULL
+| **created_at**    | TIMESTAMP                           | DEFAULT CURRENT_TIMESTAMP                        |
 
-sent_at: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
+### Message
 
-Relationships
+| Column         | Type                  | Constraints                               |
 
-The following relationships define the interactions between entities:
+| -------------- | --------------------- | ----------------------------------------- |
 
-User to Property (One-to-Many):
+| **message_id**    | UUID                  | Primary Key, Indexed                      |
 
-A User (role: 'host') can own multiple Properties.
+| **sender_id**     | UUID                  | Foreign Key → User(user_id), NOT NULL     |
 
-Each Property is owned by exactly one User (via host_id).
+| **recipient_id**  | UUID                  | Foreign Key → User(user_id), NOT NULL     |
 
-User to Booking (One-to-Many):
+| **message_body**  | TEXT                  | NOT NULL                                  |
 
-A User (role: 'guest') can make multiple Bookings.
+| **sent_at**       | TIMESTAMP             | DEFAULT CURRENT_TIMESTAMP                 |
 
-Each Booking is associated with exactly one User (via user_id).
+---
 
-Property to Booking (One-to-Many):
+## Relationships
 
-A Property can have multiple Bookings.
+- **User → Property (1:M):**  
 
-Each Booking is associated with exactly one Property (via property_id).
+  A host user can own multiple properties; each property belongs to exactly one host.
 
-Booking to Payment (One-to-Many):
+- **User → Booking (1:M):**  
 
-A Booking can have multiple Payments (e.g., partial or installment payments).
+  A guest user can make multiple bookings; each booking is linked to one guest.
 
-Each Payment is associated with exactly one Booking (via booking_id).
+- **Property → Booking (1:M):**  
 
-User to Review (One-to-Many):
+  A property can have multiple bookings; each booking references one property.
 
-A User (role: 'guest') can write multiple Reviews.
+- **Booking → Payment (1:M):**  
 
-Each Review is written by exactly one User (via user_id).
+  A booking can have multiple payments; each payment is tied to one booking.
 
-Property to Review (One-to-Many):
+- **User → Review (1:M):**  
 
-A Property can have multiple Reviews.
+  A guest user can write multiple reviews; each review is authored by one user.
 
-Each Review is associated with exactly one Property (via property_id).
+- **Property → Review (1:M):**  
 
-User to Message (Sender, One-to-Many):
+  A property can receive multiple reviews; each review pertains to one property.
 
-A User can send multiple Messages.
+- **User → Message (1:M) as Sender:**  
 
-Each Message has exactly one sender (via sender_id).
+  A user can send multiple messages; each message has exactly one sender.
 
-User to Message (Recipient, One-to-Many):
+- **User → Message (1:M) as Recipient:**  
 
-A User can receive multiple Messages.
+  A user can receive multiple messages; each message has exactly one recipient.
 
-Each Message has exactly one recipient (via recipient_id).
+---
+
+## Illustration
+
+```mermaid
+
+erDiagram
+
+    USER ||--o{ PROPERTY : owns
+
+    USER ||--o{ BOOKING  : makes
+
+    PROPERTY ||--o{ BOOKING: has
+
+    BOOKING ||--o{ PAYMENT : includes
+
+    USER ||--o{ REVIEW   : writes
+
+    PROPERTY ||--o{ REVIEW: receives
+
+    USER ||--o{ MESSAGE  : sends
+
+    USER ||--o{ MESSAGE  : receives
+
+```
+
+---
