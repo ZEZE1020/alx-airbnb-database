@@ -137,8 +137,12 @@ Results for each query will print to your console.
     * `LEFT JOIN` ensures users with zero bookings appear with a count of 0
     * Orders results by `total_bookings` descending
 2. **Property Ranking by Bookings (Window Function)**
-    * Inner aggregation groups bookings by `property_id`, counting them
-    * Outer query applies `RANK() OVER (ORDER BY bookings_count DESC)`
+   2. Property Ranking by Bookings (Window Functions)
+   - Inner aggregation groups bookings per property.
+   - `ROW_NUMBER() OVER (ORDER BY bookings_count DESC)` gives a unique sequential rank.
+   - `RANK()       OVER (ORDER BY bookings_count DESC)` gives the same rank for tied counts.
+   - Orders by `bookings_count` so the most-booked properties appear first.
+
     * Produces a ranking where tied counts share the same rank
     * Orders by `booking_rank` to list the most-booked properties first
 
