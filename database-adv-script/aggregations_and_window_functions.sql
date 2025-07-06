@@ -13,8 +13,6 @@ GROUP BY u.user_id, u.first_name, u.last_name
 ORDER BY total_bookings DESC;
 
 
--- database-adv-script/aggregations_and_window_functions.sql
-
 -- 2. Window Function: Rank properties by total bookings received
 SELECT
   stats.property_id,
