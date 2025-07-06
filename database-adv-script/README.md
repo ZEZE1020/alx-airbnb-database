@@ -103,11 +103,50 @@ The outer WHERE clause filters users whose booking count exceeds 3.
 
 Correlated because the inner SELECT refers to the outer alias u.user_id.
 
+
+# Aggregations and Window Functions Practice
+
+This part  demonstrates how to use SQL aggregation and window functions on the Airbnb-like schema.
+
+## Files
+
+- **aggregations_and_window_functions.sql**  
+
+  1. Aggregation query to count bookings per user  
+
+  2. Window function query to rank properties by booking count  
+
+## How to Run
+
+From the repository root, execute:
+
+```bash
+
+psql -d airbnb_db -f database-adv-script/aggregations_and_window_functions.sql \
+```
+
+Results for each query will print to your console.
+
+
+## **Query Breakdown**
+
+
+
+1. **Total Bookings per User (Aggregation)**
+    * Uses `COUNT()` and `GROUP BY` on `booking.user_id`
+    * `LEFT JOIN` ensures users with zero bookings appear with a count of 0
+    * Orders results by `total_bookings` descending
+2. **Property Ranking by Bookings (Window Function)**
+    * Inner aggregation groups bookings by `property_id`, counting them
+    * Outer query applies `RANK() OVER (ORDER BY bookings_count DESC)`
+    * Produces a ranking where tied counts share the same rank
+    * Orders by `booking_rank` to list the most-booked properties first
+
 ## Learn More
 
 PostgreSQL JOIN documentation: https://www.postgresql.org/docs/current/queries-table-expressions.html
 
-SQL Tutorial on Joins: https://www.sqltutorial.org/sql-joins/
+SQL Tutorial on Joins: https://www.sqltutorial.org/
 
 Feel free to modify these queries or adapt them for your own reporting and analysis needs! Comments and reviews are also welcome. 
 
