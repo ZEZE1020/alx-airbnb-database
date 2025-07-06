@@ -30,6 +30,7 @@ ORDER BY b.created_at DESC;
 -- 1) Aggregate payments per booking to avoid duplicate rows 
 -- 2) Drop unneeded IDs in SELECT  
 -- 3) Utilise indexes on user_id, property_id, created_at
+EXPLAIN ANALYZE
 WITH payment_agg AS (
   SELECT
     booking_id,
@@ -57,3 +58,7 @@ JOIN property AS p
 LEFT JOIN payment_agg AS pa
   ON b.booking_id = pa.booking_id
 ORDER BY b.created_at DESC;
+WHERE b.status = 'confirmed'
+  AND b.start_date >= CURRENT_DATE - INTERVAL '30 days'
+ORDER BY b.created_at DESC;
+
