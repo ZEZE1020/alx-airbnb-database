@@ -1,6 +1,7 @@
--- database-adv-script/joins_queries.sql
+-- this is contains queries on joins that ensures users can retrieve data without overwriting primary data and peventing data loss
+-- please refer to README.md for further explanations
 
--- 1. INNER JOIN: Retrieve all bookings with the users who made them
+-- 1. INNER JOIN: Retrieves all bookings with the users who made them
 SELECT
   b.booking_id,
   b.property_id,
@@ -17,7 +18,7 @@ INNER JOIN users AS u
 ORDER BY b.created_at;
 
 
--- 2. LEFT JOIN: Retrieve all properties and their reviews,
+-- 2. LEFT JOIN: Retrieves all properties and their reviews,
 --    including properties that have no reviews
 SELECT
   p.property_id,
@@ -32,7 +33,7 @@ LEFT JOIN review AS r
 ORDER BY p.property_id, r.created_at;
 
 
--- 3. FULL OUTER JOIN: Retrieve all users and all bookings,
+-- 3. FULL OUTER JOIN: Retrieves all users and all bookings,
 --    even if a user has no booking or a booking isn't linked to a user
 SELECT
   u.user_id,
